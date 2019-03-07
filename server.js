@@ -40,8 +40,29 @@ const routes = {
 /* Methods by Ross */
 function createComment(url, request) {
   const requestComment = request.body && request.body.comment;
+console.log(requestComment);
   const response = {};
 
+  if(!request.hasOwnProperty('body')) {
+    response.status = 400;
+    return response;
+  } else if (!request.body.hasOwnProperty('comment')) {
+    response.status = 400;
+    return response;
+  }
+
+  if(requestComment.body === '' || requestComment.username === '' || requestComment.articleId === ''){
+    response.status = 400;
+    return response;
+  } else if (!database.users.hasOwnProperty(requestComment.username)) {
+    response.status = 400;
+    return response;
+  } else if (!database.articles.hasOwnProperty(requestComment.articleId)) {
+    response.status = 400;
+    return response;
+  }
+
+console.log(requestComment);
   if(requestComment){
     const comment = {
       id: database.nextCommentId,
@@ -53,16 +74,17 @@ function createComment(url, request) {
     }
 
     database.comments[comment.id] = comment;
-    console.log(database);
     database.users[comment.username].commentIds.push(comment.id);
     database.articles[comment.articleId].commentIds.push(comment.id);
 
     database.nextCommentId++;
 
-    response.body = comment;
+    response.body = {comment: comment};
+    //console.log(response.body.id);
     response.status = 201;
   } else {
     response.status = 400;
+    return response;
   }
 
   return response;
