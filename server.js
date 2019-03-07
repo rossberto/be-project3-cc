@@ -40,32 +40,13 @@ const routes = {
 /* Methods by Ross */
 function createComment(url, request) {
   const requestComment = request.body && request.body.comment;
-console.log(requestComment);
   const response = {};
 
-  if(!request.hasOwnProperty('body')) {
-    response.status = 400;
-    return response;
-  } else if (!request.body.hasOwnProperty('comment')) {
-    response.status = 400;
-    return response;
-  }
-
-  if(requestComment.body === '' || requestComment.username === '' || requestComment.articleId === ''){
-    response.status = 400;
-    return response;
-  } else if (!database.users.hasOwnProperty(requestComment.username)) {
-    response.status = 400;
-    return response;
-  } else if (!database.articles.hasOwnProperty(requestComment.articleId)) {
-    response.status = 400;
-    return response;
-  }
-
-console.log(requestComment);
-  if(requestComment){
+  if(requestComment && requestComment.body && requestComment.username &&
+     requestComment.articleId && database.users[requestComment.username] &&
+     database.articles[requestComment.articleId]){
     const comment = {
-      id: database.nextCommentId,
+      id: database.nextCommentId++,
       body: requestComment.body,
       username: requestComment.username,
       articleId: requestComment.articleId,
@@ -77,10 +58,7 @@ console.log(requestComment);
     database.users[comment.username].commentIds.push(comment.id);
     database.articles[comment.articleId].commentIds.push(comment.id);
 
-    database.nextCommentId++;
-
     response.body = {comment: comment};
-    //console.log(response.body.id);
     response.status = 201;
   } else {
     response.status = 400;
