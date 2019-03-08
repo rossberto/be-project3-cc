@@ -36,8 +36,12 @@ const routes = {
     'PUT': updateComment,
     'DELETE': deleteComment
   },
-  '/comments/:id/upvote': {},
-  '/comments/:id/downvote': {}
+  '/comments/:id/upvote': {
+    'PUT': updateVote
+  },
+  '/comments/:id/downvote': {
+    'PUT': updateVote
+  }
 };
 
 /* Methods by Ross */
@@ -107,6 +111,41 @@ function deleteComment(url, request) {
     database.comments[id] = null;
 
     response.status = 204;
+  }
+
+  return response;
+}
+
+function updateVote(url, request) {
+  const response = {body: {}};
+  const urlArr = url.split('/').filter(segment => segment);
+  const id = Number(urlArr[1]);
+  const vote = urlArr[2];
+  const requestVote = request && request.body;
+
+  if(!id || !database.comments[id] || !requestVote ||
+     !requestVote.username || !database.users[requestVote.username]) {
+    response.status = 400;
+  } else if(vote === 'upvote') {
+    if( !database.comments[id].upvotedBy.includes(requestVote.username) ) {
+      database.comments[id].upvotedBy.push(requestVote.username);
+      response.status = 200;
+      response.body.comment = database.comments[id];
+    }
+    if( database.comments[id].downvotedBy.includes(requestVote.username) ) {
+      const user_index = database.comments[id].downvotedBy.indexOf(requestVote.username);
+      database.comments[id].downvotedBy.splice(user_index, 1);
+    }
+  } else if(vote === 'downvote') {
+    if( !database.comments[id].downvotedBy.includes(requestVote.username) ) {
+      database.comments[id].downvotedBy.push(requestVote.username);
+      response.status = 200;
+      response.body.comment = database.comments[id];
+    }
+    if( database.comments[id].upvotedBy.includes(requestVote.username) ) {
+      const user_index = database.comments[id].upvotedBy.indexOf(requestVote.username);
+      database.comments[id].upvotedBy.splice(user_index, 1);
+    }
   }
 
   return response;
