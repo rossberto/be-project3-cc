@@ -1,3 +1,7 @@
+// Yaml modules and filesystem to allow us to store database
+let yaml = require('js-yaml');
+let fs = require('fs');
+
 // database is let instead of const to allow us to modify it in test.js
 let database = {
   users: {},
@@ -44,7 +48,7 @@ const routes = {
   }
 };
 
-/* Methods by Ross */
+/* Methods by Ross ***********************************************************/
 function createComment(url, request) {
   const requestComment = request.body && request.body.comment;
   const response = {};
@@ -150,7 +154,23 @@ function updateVote(url, request) {
 
   return response;
 }
-/* End methods by Ross */
+
+function saveDatabase() {
+  const object = yaml.safeDump(database);
+  fs.writeFileSync('./database.yml', object);
+}
+
+function loadDatabase() {
+  // Get database, or throw error message
+  try {
+    database = yaml.safeLoad(fs.readFileSync('./database.yml', 'utf8'));
+    console.log('Database loaded');
+  } catch (e) {
+    console.log(">>>>> Error on loading database");
+  }
+}
+
+/* End methods by Ross *******************************************************/
 
 function getUser(url, request) {
   const username = url.split('/').filter(segment => segment)[1];
