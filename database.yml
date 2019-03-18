@@ -1,0 +1,61 @@
+users:
+  ross:
+    username: ross
+    articleIds:
+      - 3
+    commentIds: []
+  otro:
+    username: otro
+    articleIds:
+      - 2
+    commentIds: []
+  chango:
+    username: chango
+    articleIds:
+      - 4
+    commentIds: []
+  cv:
+    username: cv
+    articleIds: []
+    commentIds: []
+articles:
+  '1': null
+  '2':
+    id: 2
+    title: otro post
+    url: otraurl
+    username: otro
+    commentIds: []
+    upvotedBy:
+      - otro
+      - ross
+      - chango
+    downvotedBy:
+      - cv
+  '3':
+    id: 3
+    title: sdfg
+    url: sdfg
+    username: ross
+    commentIds: []
+    upvotedBy: []
+    downvotedBy:
+      - ross
+      - chango
+      - cv
+    comments: []
+  '4':
+    id: 4
+    title: popo
+    url: fgfg
+    username: chango
+    commentIds: []
+    upvotedBy:
+      - chango
+      - cv
+    downvotedBy: []
+nextArticleId: 5
+comments:
+  '1': null
+  '2': null
+nextCommentId: 3
